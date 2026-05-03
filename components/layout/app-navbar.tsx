@@ -1,0 +1,121 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { Leaf, LayoutDashboard, Menu, Utensils } from "lucide-react";
+import * as React from "react";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/feedback", label: "Submit Feedback" },
+  { href: "/analytics", label: "Analytics" },
+  { href: "/qr", label: "QR Access" },
+] as const;
+
+export function AppNavbar() {
+  const pathname = usePathname();
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-black/[0.06] bg-white/70 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:h-16">
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-lg px-1 py-1 text-neutral-900"
+        >
+          <span className="flex size-9 items-center justify-center rounded-xl bg-[#4285F4]/10 text-[#4285F4] shadow-sm shadow-[#4285F4]/10">
+            <Leaf className="size-5" aria-hidden />
+          </span>
+          <span className="hidden flex-col leading-tight sm:flex">
+            <span className="text-sm font-semibold tracking-tight">Amrita</span>
+            <span className="text-xs text-neutral-600">Food Feedback</span>
+          </span>
+        </Link>
+
+        <nav className="ml-auto hidden items-center gap-1 md:flex" aria-label="Primary">
+          {links.map(({ href, label }) => {
+            const active = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "relative rounded-full px-3 py-2 text-sm font-medium transition-colors hover:bg-neutral-900/[0.04]",
+                  active && "text-[#4285F4]"
+                )}
+              >
+                {label}
+                {active && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 -z-10 rounded-full bg-[#4285F4]/10"
+                    transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                  />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="md:hidden"
+          aria-label="Open menu"
+          onClick={() => setOpen((v) => !v)}
+        >
+          <Menu className="size-4" />
+        </Button>
+
+        <div className="hidden md:block">
+          <Link href="/feedback">
+            <Button size="sm" className="rounded-full bg-[#4285F4] shadow-md shadow-[#4285F4]/25">
+              <Utensils className="size-4" />
+              Submit Feedback
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="border-t border-black/[0.06] bg-white md:hidden"
+          >
+            <div className="flex flex-col gap-1 px-3 py-3">
+              {links.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "rounded-xl px-3 py-3 text-sm font-medium",
+                    pathname === href ? "bg-[#4285F4]/10 text-[#4285F4]" : "hover:bg-neutral-50"
+                  )}
+                >
+                  {label}
+                </Link>
+              ))}
+              <Link
+                href="/feedback"
+                onClick={() => setOpen(false)}
+                className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-[#4285F4] px-3 py-3 text-sm font-semibold text-white"
+              >
+                <LayoutDashboard className="size-4" />
+                Submit Feedback
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}

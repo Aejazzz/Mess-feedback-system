@@ -1,0 +1,26 @@
+// Amrita Food Feedback — PostgreSQL (see .env.example / docker-compose.yml)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  mealType    String
+  block       String
+  studentType String
+  rating      Int
+  date        String
+  day         String
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+  @@index([mealType])
+  @@index([block])
+  @@index([studentType])
+}
