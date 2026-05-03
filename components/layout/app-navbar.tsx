@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Leaf, LayoutDashboard, Menu, Utensils } from "lucide-react";
+import { LayoutDashboard, Menu, Utensils } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -25,14 +26,21 @@ export function AppNavbar() {
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:h-16">
         <Link
           href="/"
-          className="flex items-center gap-2 rounded-lg px-1 py-1 text-neutral-900"
+          className="flex min-w-0 max-w-[min(100%,22rem)] items-center gap-2 rounded-lg py-1 pr-1 text-neutral-900"
         >
-          <span className="flex size-9 items-center justify-center rounded-xl bg-[#4285F4]/10 text-[#4285F4] shadow-sm shadow-[#4285F4]/10">
-            <Leaf className="size-5" aria-hidden />
+          <span className="relative h-9 w-36 shrink-0 overflow-hidden rounded-lg ring-1 ring-black/[0.06] sm:h-10 sm:w-44">
+            <Image
+              src="/amrita-logo.png"
+              alt="Amrita Vishwa Vidyapeetham"
+              fill
+              className="object-contain object-left"
+              priority
+              sizes="(max-width: 640px) 9rem, 11rem"
+            />
           </span>
-          <span className="hidden flex-col leading-tight sm:flex">
-            <span className="text-sm font-semibold tracking-tight">Amrita</span>
-            <span className="text-xs text-neutral-600">Food Feedback</span>
+          <span className="hidden min-w-0 flex-col leading-tight sm:flex">
+            <span className="text-sm font-semibold tracking-tight">Food Feedback</span>
+            <span className="text-xs text-neutral-600">Anonymous mess ratings</span>
           </span>
         </Link>
 
