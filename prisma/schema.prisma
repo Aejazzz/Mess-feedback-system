@@ -1,7 +1,9 @@
 // Amrita Food Feedback — PostgreSQL (see .env.example / docker-compose.yml)
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Vercel runs Linux; include so `prisma generate` on Windows still produces a deployable client.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
