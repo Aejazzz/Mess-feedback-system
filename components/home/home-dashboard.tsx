@@ -29,7 +29,7 @@ import { format } from "date-fns";
 
 function KpiRibbon({ data }: { data: AnalyticsPayload | undefined }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       <div className="rounded-2xl border border-black/[0.06] bg-white/70 p-4 shadow-sm backdrop-blur">
         <p className="text-xs font-medium uppercase tracking-wide text-neutral-600">Total pulse</p>
         <div className="mt-2 text-4xl font-semibold tracking-tight text-neutral-900">
@@ -46,7 +46,7 @@ function KpiRibbon({ data }: { data: AnalyticsPayload | undefined }) {
         </div>
         <p className="mt-2 text-xs text-muted-foreground">Rounded to two serene decimals</p>
       </div>
-      <div className="rounded-2xl border border-black/[0.06] bg-gradient-to-br from-[#4285F4]/10 via-[#34A853]/10 to-transparent p-4 shadow-inner shadow-[#4285F4]/10">
+      <div className="col-span-2 rounded-2xl border border-black/[0.06] bg-gradient-to-br from-[#4285F4]/10 via-[#34A853]/10 to-transparent p-4 shadow-inner shadow-[#4285F4]/10 sm:col-span-1">
         <p className="text-xs font-medium uppercase tracking-wide text-neutral-700">
           Suggested meal window
         </p>
@@ -73,29 +73,52 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
       <main className="mx-auto min-w-0 max-w-6xl space-y-12 px-4 pb-16 pt-8 sm:pt-12">
         <section className="overflow-hidden rounded-3xl border border-black/[0.06] bg-gradient-to-br from-white via-white to-[#4285F4]/6 p-4 shadow-sm sm:rounded-[28px] sm:p-6 lg:rounded-[32px] lg:p-8">
           <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ type: "spring", stiffness: 220, damping: 24 }}
-                className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-neutral-700 ring-1 ring-black/[0.06]"
-              >
-                <ShieldCheck className="size-4 text-[#34A853]" />
-                Fully anonymous • no accounts
-              </motion.div>
-              <motion.h1
-                className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05, type: "spring", stiffness: 180, damping: 22 }}
-              >
-                Meals that listen to every hallway.
-              </motion.h1>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-600">
-                Glide through a buttery-smooth dashboard for Amrita hostel dining—friendly inputs,
-                live charts, and block-by-block clarity shaped by pastel Google tones.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
+            <div className="min-w-0 space-y-4 lg:space-y-0">
+              <div className="rounded-3xl border border-black/[0.06] bg-white/95 p-5 shadow-sm sm:p-6 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 220, damping: 24 }}
+                  className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-neutral-700 ring-1 ring-black/[0.06] lg:bg-white/80"
+                >
+                  <ShieldCheck className="size-4 text-[#34A853]" />
+                  Fully anonymous • no accounts
+                </motion.div>
+                <motion.h1
+                  className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.05, type: "spring", stiffness: 180, damping: 22 }}
+                >
+                  Meals that listen to every hallway.
+                </motion.h1>
+                <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-600">
+                  Glide through a buttery-smooth dashboard for Amrita hostel dining—friendly inputs,
+                  live charts, and block-by-block clarity shaped by pastel Google tones.
+                </p>
+                <div className="mt-8 lg:hidden">
+                  <Link href="/analytics" className="inline-flex">
+                    <Button variant="outline" className="rounded-full px-6 py-6">
+                      Explore analytics
+                      <LineChartIcon className="size-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <div className="lg:hidden">
+                <Link href="/feedback" className="flex w-full sm:inline-flex sm:w-auto">
+                  <Button className="group relative isolate w-full overflow-hidden rounded-full bg-[#4285F4] px-6 py-6 text-base font-semibold text-white shadow-lg shadow-[#4285F4]/30 sm:w-auto">
+                    <span className="relative z-[1] flex items-center justify-center gap-2">
+                      Submit Feedback
+                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                    <span className="pointer-events-none absolute inset-0 rounded-full opacity-60 mix-blend-screen">
+                      <span className="absolute left-1/2 top-full size-[200%] -translate-x-1/2 rounded-full bg-white/35 transition-transform duration-[1100ms] ease-out group-hover:-translate-y-[135%]" />
+                    </span>
+                  </Button>
+                </Link>
+              </div>
+              <div className="mt-8 hidden flex-wrap gap-3 lg:flex">
                 <Link href="/feedback">
                   <Button className="group relative isolate overflow-hidden rounded-full bg-[#4285F4] px-6 py-6 text-base font-semibold text-white shadow-lg shadow-[#4285F4]/30">
                     <span className="relative z-[1] flex items-center gap-2">

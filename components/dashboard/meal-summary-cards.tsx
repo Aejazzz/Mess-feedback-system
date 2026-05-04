@@ -27,7 +27,7 @@ const mealIcon: Record<MealType, ComponentType<{ className?: string }>> = {
 export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined }) {
   const meals: MealType[] = ["Breakfast", "Lunch", "Snacks", "Dinner"];
   return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Meal summaries">
+    <section className="grid grid-cols-2 gap-3 min-[480px]:gap-4 xl:grid-cols-4" aria-label="Meal summaries">
       {meals.map((meal, i) => {
         const row = data?.byMeal[meal] ?? { count: 0, avg: 0 };
         const tone = satisfactionTone(row.avg);
@@ -36,6 +36,7 @@ export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined 
         return (
           <motion.div
             key={meal}
+            className="min-w-0"
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-12%" }}
@@ -51,23 +52,23 @@ export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined 
                 borderColor: `${ring}22`,
               }}
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
+              <CardHeader className="space-y-2 pb-2 sm:pb-3">
+                <div className="flex flex-col gap-2 min-[400px]:flex-row min-[400px]:items-start min-[400px]:justify-between min-[400px]:gap-3">
+                  <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                     <span
-                      className="flex size-10 items-center justify-center rounded-2xl bg-white shadow-sm shadow-black/[0.04] ring-1 ring-black/[0.06]"
+                      className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm shadow-black/[0.04] ring-1 ring-black/[0.06] sm:size-10"
                       style={{ color: ring }}
                     >
-                      <Icon className="size-5" aria-hidden />
+                      <Icon className="size-4 sm:size-5" aria-hidden />
                     </span>
-                    <div>
-                      <CardTitle>{meal}</CardTitle>
-                      <p className="text-xs text-muted-foreground">Rolling snapshot</p>
+                    <div className="min-w-0">
+                      <CardTitle className="text-base leading-tight sm:text-lg">{meal}</CardTitle>
+                      <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Rolling snapshot</p>
                     </div>
                   </div>
                   <Badge
                     className={cn(
-                      "rounded-full border-0 backdrop-blur",
+                      "shrink-0 self-start rounded-full border-0 px-2 py-0.5 text-[0.65rem] backdrop-blur sm:px-2.5 sm:text-xs",
                       tone === "good" && "bg-emerald-50 text-emerald-800",
                       tone === "average" && "bg-amber-50 text-amber-900",
                       tone === "poor" && "bg-rose-50 text-rose-900"
@@ -77,15 +78,17 @@ export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined 
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="pb-4">
-                <div className="flex items-end justify-between gap-3">
-                  <div>
-                    <p className="text-5xl font-semibold tracking-tight">{row.avg.toFixed(1)}</p>
-                    <p className="text-xs text-muted-foreground">average stars</p>
+              <CardContent className="pb-3 sm:pb-4">
+                <div className="flex items-end justify-between gap-2 sm:gap-3">
+                  <div className="min-w-0">
+                    <p className="text-3xl font-semibold tracking-tight tabular-nums sm:text-5xl">
+                      {row.avg.toFixed(1)}
+                    </p>
+                    <p className="text-[0.65rem] text-muted-foreground sm:text-xs">average stars</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-neutral-900">{row.count}</p>
-                    <p className="text-xs text-muted-foreground">responses</p>
+                  <div className="shrink-0 text-right">
+                    <p className="text-xs font-medium text-neutral-900 sm:text-sm">{row.count}</p>
+                    <p className="text-[0.65rem] text-muted-foreground sm:text-xs">responses</p>
                   </div>
                 </div>
                 <div
@@ -104,7 +107,7 @@ export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined 
                   />
                 </div>
               </CardContent>
-              <CardFooter className="text-xs text-neutral-700">
+              <CardFooter className="text-[0.62rem] leading-snug text-neutral-700 sm:text-xs">
                 Suggested campus session is informed by gentle time windows—not strict cutoffs.
               </CardFooter>
             </Card>
