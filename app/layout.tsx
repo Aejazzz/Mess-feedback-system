@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 
 import { AppProviders } from "@/components/providers/app-providers";
@@ -7,6 +7,13 @@ import { AppProviders } from "@/components/providers/app-providers";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans-app",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-display-app",
+  display: "swap",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL;
@@ -29,7 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} min-h-dvh bg-[#FAFAFA] antialiased`}>
+      <body
+        className={`${inter.variable} ${poppins.variable} min-h-dvh bg-[#FAFAFA] antialiased`}
+      >
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
