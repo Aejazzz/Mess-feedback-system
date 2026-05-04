@@ -11,9 +11,9 @@ export const metadata = {
 
 export default function FeedbackPage() {
   return (
-    <div className="min-h-svh bg-[#FAFAFA]">
+    <div className="min-h-svh min-w-0 bg-[#FAFAFA]">
       <AppNavbar />
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-12">
+      <main className="mx-auto min-w-0 max-w-3xl space-y-6 px-3 py-8 sm:px-4 sm:py-12">
         <div className="text-center space-y-2">
           <p className="text-sm font-semibold text-[#4285F4]">Voice without a footprint</p>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">

@@ -71,8 +71,8 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
     <div className="min-h-svh min-w-0 bg-[#FAFAFA] text-neutral-900">
       <AppNavbar />
       <main className="mx-auto min-w-0 max-w-6xl space-y-12 px-4 pb-16 pt-8 sm:pt-12">
-        <section className="overflow-hidden rounded-[32px] border border-black/[0.06] bg-gradient-to-br from-white via-white to-[#4285F4]/6 p-8 shadow-sm">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <section className="overflow-hidden rounded-3xl border border-black/[0.06] bg-gradient-to-br from-white via-white to-[#4285F4]/6 p-4 shadow-sm sm:rounded-[28px] sm:p-6 lg:rounded-[32px] lg:p-8">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -84,7 +84,7 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
                 Fully anonymous • no accounts
               </motion.div>
               <motion.h1
-                className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl"
+                className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl"
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.05, type: "spring", stiffness: 180, damping: 22 }}
