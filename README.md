@@ -1,4 +1,4 @@
-# Amrita Food Feedback System
+# Amrita University Food Feedback System
 
 Next.js app for anonymous mess feedback and live analytics. Uses **PostgreSQL** via **Docker Compose** for local development.
 
