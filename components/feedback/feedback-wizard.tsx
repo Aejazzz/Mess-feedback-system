@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -23,9 +22,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FEEDBACK_REVIEW_MAX_LEN, HOSTEL_BLOCKS, MEALS } from "@/lib/constants";
+import { FEEDBACK_REVIEW_MAX_LEN, HOSTEL_BLOCKS } from "@/lib/constants";
 import type { MealType } from "@/lib/constants";
+import {
+  CAMPUS_TIME_ZONE,
+  describeFullScheduleIST,
+  formatMealWindowHuman,
+  getNextServingHint,
+  getOpenMeals,
+  isMealWindowOpen,
+} from "@/lib/meal-windows";
 import { cn } from "@/lib/utils";
+
+const CLIENT_ID_STORAGE_KEY = "amrita-mess-feedback-client-id";
+
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function getOrCreateFeedbackClientId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const existing = window.localStorage.getItem(CLIENT_ID_STORAGE_KEY);
+    if (existing && UUID_RE.test(existing)) return existing;
+    const id = crypto.randomUUID();
+    window.localStorage.setItem(CLIENT_ID_STORAGE_KEY, id);
+    return id;
+  } catch {
+    return "";
+  }
+}
 
 const emojiFor: Record<number, string> = {
   1: "😭",
@@ -35,24 +60,36 @@ const emojiFor: Record<number, string> = {
   5: "😍",
 };
 
-function FeedbackSessionNotice({ meal }: { meal: MealType | "" }) {
-  const [now, setNow] = React.useState(() => new Date());
-  React.useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 30_000);
-    return () => window.clearInterval(id);
-  }, []);
+function formatNowInIST(now: Date) {
+  const datePart = new Intl.DateTimeFormat("en-GB", {
+    timeZone: CAMPUS_TIME_ZONE,
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(now);
+  const timePart = new Intl.DateTimeFormat("en-GB", {
+    timeZone: CAMPUS_TIME_ZONE,
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(now);
+  return { datePart, timePart };
+}
 
-  const datePart = format(now, "EEEE, MMMM d, yyyy");
-  const timePart = format(now, "h:mm a");
+function FeedbackSessionNotice({ meal, now }: { meal: MealType | ""; now: Date }) {
+  const { datePart, timePart } = formatNowInIST(now);
 
   if (!meal) {
     return (
       <div className="rounded-2xl border border-black/[0.08] bg-white px-4 py-3 text-center shadow-sm sm:px-5">
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">India Standard Time (IST)</p>
         <p className="text-sm font-semibold text-neutral-900">{datePart}</p>
         <p className="text-sm font-medium text-neutral-700">{timePart}</p>
         <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-          Select the meal you are rating in the form below. Your submission will be recorded with the
-          date and time shown above.
+          When a serving window is open, choose that meal in the form below. Your submission is tied to
+          the date and time above and you can submit once per meal per window on this device.
         </p>
       </div>
     );
@@ -60,6 +97,7 @@ function FeedbackSessionNotice({ meal }: { meal: MealType | "" }) {
 
   return (
     <div className="rounded-2xl border border-[#4285F4]/25 bg-[#4285F4]/8 px-4 py-3 text-center shadow-sm sm:px-5">
+      <p className="text-xs font-medium uppercase tracking-wide text-neutral-600">India Standard Time (IST)</p>
       <p className="text-sm leading-relaxed text-neutral-800">
         You are giving feedback for <span className="font-semibold text-neutral-950">{meal}</span> on{" "}
         <span className="font-medium text-neutral-900">{datePart}</span> at{" "}
@@ -81,12 +119,37 @@ export function FeedbackWizard() {
   const [hover, setHover] = React.useState(0);
   const [review, setReview] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
+  const [now, setNow] = React.useState(() => new Date());
+
+  const clientId = React.useSyncExternalStore(
+    () => () => {},
+    () => getOrCreateFeedbackClientId(),
+    () => ""
+  );
+
+  const openMeals = React.useMemo(() => getOpenMeals(now), [now]);
+
+  React.useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 5000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const selectedMealOnStep0 = meal && openMeals.includes(meal) ? meal : "";
+  const mealForContext = step === 0 ? selectedMealOnStep0 : meal || "";
 
   const active = hover || rating;
 
   async function submit() {
     if (!meal || !block || !rating) {
       toast.error("Please complete all steps before submitting.");
+      return;
+    }
+    if (!clientId) {
+      toast.error("Session not ready. Please reload the page and try again.");
+      return;
+    }
+    if (!isMealWindowOpen(meal, new Date())) {
+      toast.error("This meal serving window has closed. Please go back and choose the current meal.");
       return;
     }
     setSubmitting(true);
@@ -98,12 +161,17 @@ export function FeedbackWizard() {
           mealType: meal,
           block,
           rating,
+          clientId,
           review: review.trim() || undefined,
         }),
       });
       const body = await res.json();
       if (!res.ok) {
-        toast.error(body.error ?? "Unable to submit right now.");
+        if (res.status === 409) {
+          toast.error(body.error ?? "You already submitted for this meal window.");
+        } else {
+          toast.error(body.error ?? "Unable to submit right now.");
+        }
         return;
       }
       router.push("/feedback/thank-you");
@@ -116,7 +184,7 @@ export function FeedbackWizard() {
 
   return (
     <div className="mx-auto w-full max-w-xl space-y-4">
-      <FeedbackSessionNotice meal={meal} />
+      <FeedbackSessionNotice meal={mealForContext} now={now} />
       <Card className="w-full border-black/[0.06] bg-white/90 shadow-xl shadow-black/[0.05] backdrop-blur-xl">
         <CardHeader>
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#4285F4]">
@@ -146,21 +214,38 @@ export function FeedbackWizard() {
               className="space-y-4"
             >
               <p className="text-lg font-semibold tracking-tight">Which meal?</p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {MEALS.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => setMeal(m)}
-                    className={`rounded-2xl border px-4 py-4 text-left shadow-sm ring-1 transition-all hover:-translate-y-1 hover:shadow-md ${
-                      meal === m ? "border-[#4285F4] bg-[#4285F4]/10" : "border-black/[0.06] bg-[#FAFAFA]"
-                    }`}
-                  >
-                    <p className="text-base font-semibold">{m}</p>
-                    <p className="text-xs text-neutral-600">Select</p>
-                  </button>
-                ))}
-              </div>
+              <p className="text-sm text-muted-foreground">
+                Only meals with an open serving window (IST) can be selected. Schedule:{" "}
+                {describeFullScheduleIST()}.
+              </p>
+              {openMeals.length === 0 ? (
+                <div className="rounded-2xl border border-amber-200/80 bg-amber-50/90 px-4 py-4 text-sm text-amber-950">
+                  <p className="font-medium">No meal window is open right now.</p>
+                  <p className="mt-1 text-amber-900/90">{getNextServingHint(now)}</p>
+                  <p className="mt-2 text-xs text-amber-900/80">
+                    Each meal can be rated once per serving time on this device. Please return during the
+                    times above.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {openMeals.map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => setMeal(m)}
+                      className={`rounded-2xl border px-4 py-4 text-left shadow-sm ring-1 transition-all hover:-translate-y-1 hover:shadow-md ${
+                        selectedMealOnStep0 === m
+                          ? "border-[#4285F4] bg-[#4285F4]/10"
+                          : "border-black/[0.06] bg-[#FAFAFA]"
+                      }`}
+                    >
+                      <p className="text-base font-semibold">{m}</p>
+                      <p className="text-xs text-neutral-600">{formatMealWindowHuman(m)} IST · open now</p>
+                    </button>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -264,7 +349,12 @@ export function FeedbackWizard() {
           {step < 2 ? (
             <Button
               className="relative isolate overflow-hidden rounded-full bg-[#4285F4] px-6"
-              disabled={submitting || (step === 0 && !meal) || (step === 1 && !block)}
+              disabled={
+              submitting ||
+              !clientId ||
+              (step === 0 && (!selectedMealOnStep0 || openMeals.length === 0)) ||
+              (step === 1 && !block)
+            }
               onClick={() => setStep((s) => Math.min(2, s + 1))}
             >
               Continue

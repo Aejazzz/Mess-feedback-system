@@ -3,15 +3,24 @@ import { Prisma } from "@prisma/client";
 import { getMealSessionContext } from "@/lib/meal-context";
 import { FEEDBACK_REVIEW_MAX_LEN, HOSTEL_BLOCKS, MEALS } from "@/lib/constants";
 import type { MealType } from "@/lib/constants";
+import { formatMealWindowHuman, getMealSlotKey, isMealWindowOpen } from "@/lib/meal-windows";
 
 import { prisma } from "@/lib/prisma";
+
+const CLIENT_UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export type FeedbackInput = {
   mealType: MealType;
   block: string;
   rating: number;
   review?: string | null;
+  clientId: string;
 };
+
+export type CreateFeedbackResult =
+  | { ok: true }
+  | { ok: false; error: string; code?: "DUPLICATE_SLOT" };
 
 export function validateFeedback(input: FeedbackInput): string | null {
   if (!MEALS.includes(input.mealType)) return "Invalid meal type.";
@@ -24,15 +33,30 @@ export function validateFeedback(input: FeedbackInput): string | null {
   if (review.length > FEEDBACK_REVIEW_MAX_LEN) {
     return `Review must be at most ${FEEDBACK_REVIEW_MAX_LEN} characters.`;
   }
+  const cid = input.clientId.trim();
+  if (!CLIENT_UUID_RE.test(cid)) {
+    return "Invalid client identifier. Please reload the page and try again.";
+  }
   return null;
 }
 
-export async function createAnonymousFeedback(body: FeedbackInput) {
+export async function createAnonymousFeedback(body: FeedbackInput): Promise<CreateFeedbackResult> {
   const err = validateFeedback(body);
-  if (err) return { ok: false as const, error: err };
+  if (err) return { ok: false, error: err };
 
-  const ctx = getMealSessionContext();
+  const now = new Date();
+  if (!isMealWindowOpen(body.mealType, now)) {
+    return {
+      ok: false,
+      error: `Feedback for ${body.mealType} is only accepted during ${formatMealWindowHuman(body.mealType)} IST.`,
+    };
+  }
+
+  const ctx = getMealSessionContext(now);
   const reviewTrimmed = body.review?.trim() ?? "";
+  const mealSlotKey = getMealSlotKey(body.mealType, now);
+  const clientId = body.clientId.trim();
+
   try {
     await prisma.feedback.create({
       data: {
@@ -42,12 +66,25 @@ export async function createAnonymousFeedback(body: FeedbackInput) {
         review: reviewTrimmed.length > 0 ? reviewTrimmed : null,
         date: ctx.dateLabel,
         day: ctx.dayLabel,
+        clientId,
+        mealSlotKey,
       },
     });
-    return { ok: true as const };
+    return { ok: true };
   } catch (unknownError) {
+    if (
+      unknownError instanceof Prisma.PrismaClientKnownRequestError &&
+      unknownError.code === "P2002"
+    ) {
+      return {
+        ok: false,
+        code: "DUPLICATE_SLOT",
+        error:
+          "You have already submitted feedback for this meal during the current serving time. Please wait until the next meal window opens.",
+      };
+    }
     console.error("[feedback] database error:", unknownError);
-    return { ok: false as const, error: formatFeedbackDbError(unknownError) };
+    return { ok: false, error: formatFeedbackDbError(unknownError) };
   }
 }
 

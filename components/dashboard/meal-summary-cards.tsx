@@ -108,7 +108,8 @@ export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined 
                 </div>
               </CardContent>
               <CardFooter className="text-[0.62rem] leading-snug text-neutral-700 sm:text-xs">
-                Meal labels use approximate time windows (breakfast, lunch, snacks, dinner), not exact cut‑offs.
+                Serving windows are in IST: Breakfast 07:00–09:00, Lunch 12:30–14:00, Snacks 16:45–17:30,
+                Dinner 19:30–20:30. Feedback accepts one submission per meal window per device.
               </CardFooter>
             </Card>
           </motion.div>

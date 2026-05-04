@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
     return NextResponse.json(
-      { error: "Expected a JSON object with mealType, block, rating, and optional review." },
+      { error: "Expected a JSON object with mealType, block, rating, clientId, and optional review." },
       { status: 400 }
     );
   }
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
     block: String(payload.block ?? ""),
     rating,
     review,
+    clientId: String(payload.clientId ?? ""),
   };
 
   const res = await createAnonymousFeedback({
@@ -50,14 +51,20 @@ export async function POST(req: Request) {
     block: body.block,
     rating: Number.isFinite(rating) ? rating : Number.NaN,
     review: body.review,
+    clientId: body.clientId,
   });
 
   if (!res.ok) {
+    if ("code" in res && res.code === "DUPLICATE_SLOT") {
+      return NextResponse.json({ error: res.error }, { status: 409 });
+    }
     const isValidation =
       res.error.includes("Invalid") ||
       res.error.includes("between") ||
       res.error.includes("Rating") ||
-      res.error.includes("Review must");
+      res.error.includes("Review must") ||
+      res.error.includes("identifier") ||
+      res.error.includes("only accepted during");
     return NextResponse.json(
       { error: res.error },
       { status: isValidation ? 400 : 503 }

@@ -12,16 +12,21 @@ datasource db {
 }
 
 model Feedback {
-  id        String   @id @default(cuid())
-  mealType  String
-  block     String
-  rating    Int
-  review    String?
-  date      String
-  day       String
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  mealType     String
+  block        String
+  rating       Int
+  review       String?
+  date         String
+  day          String
+  createdAt    DateTime @default(now())
+  // Per-browser UUID + IST slot key; at most one row per (clientId, mealSlotKey) when both set.
+  clientId     String?  @db.VarChar(40)
+  mealSlotKey  String?  @db.VarChar(48)
 
   @@index([date])
   @@index([mealType])
   @@index([block])
+  @@index([clientId, mealSlotKey])
+  @@unique([clientId, mealSlotKey], map: "Feedback_clientId_mealSlotKey_key")
 }

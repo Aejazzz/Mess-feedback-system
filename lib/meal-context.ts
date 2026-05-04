@@ -1,7 +1,5 @@
-import { format } from "date-fns";
-
-import type { MealType } from "@/lib/constants";
-import { MEALS } from "@/lib/constants";
+import { MEALS, type MealType } from "@/lib/constants";
+import { getSuggestedMealForDisplay, istCalendarDateKey, istWeekdayName } from "@/lib/meal-windows";
 
 export type MealSessionContext = {
   nowISO: string;
@@ -11,21 +9,14 @@ export type MealSessionContext = {
 };
 
 /**
- * Infers suggested meal session from local wall-clock hour (mess-style windows).
+ * Server “today” labels plus suggested meal from official IST serving windows.
  */
 export function getMealSessionContext(at: Date = new Date()): MealSessionContext {
-  const h = at.getHours() + at.getMinutes() / 60;
-  let suggested: MealType = "Breakfast";
-  if (h >= 7 && h < 11) suggested = "Breakfast";
-  else if (h >= 11 && h < 15.5) suggested = "Lunch";
-  else if (h >= 15.5 && h < 19) suggested = "Snacks";
-  else suggested = "Dinner";
-
   return {
     nowISO: at.toISOString(),
-    dateLabel: format(at, "yyyy-MM-dd"),
-    dayLabel: format(at, "EEEE"),
-    suggestedMeal: suggested,
+    dateLabel: istCalendarDateKey(at),
+    dayLabel: istWeekdayName(at),
+    suggestedMeal: getSuggestedMealForDisplay(at),
   };
 }
 
