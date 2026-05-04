@@ -25,16 +25,16 @@ export default function QrPage() {
       <AppNavbar />
       <main className="mx-auto max-w-xl space-y-8 px-4 py-14">
         <div className="space-y-2 text-center">
-          <p className="text-sm font-semibold text-[#4285F4]">Campus kiosk friendly</p>
-          <h1 className="text-3xl font-semibold tracking-tight">Snap to speak your taste</h1>
+          <p className="text-sm font-semibold text-[#4285F4]">QR access</p>
+          <h1 className="text-3xl font-semibold tracking-tight">Mess feedback QR code</h1>
           <p className="text-sm text-neutral-600">
-            Large QR targeting {url ? "your deployed domain" : "this device"} · always anonymous.
+            Scan to open the anonymous feedback form. Link uses {url ? "this site's address" : "this device"}.
           </p>
         </div>
         <Card className="border-black/[0.06] bg-white/85 backdrop-blur">
           <CardHeader>
             <CardTitle>Feedback QR</CardTitle>
-            <CardDescription>Points students straight into the buttery multi-step flow.</CardDescription>
+            <CardDescription>Opens the same multi-step feedback form as on the website.</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center pb-10">
             {url ? (

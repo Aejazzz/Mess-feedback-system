@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -34,6 +35,43 @@ const emojiFor: Record<number, string> = {
   5: "😍",
 };
 
+function FeedbackSessionNotice({ meal }: { meal: MealType | "" }) {
+  const [now, setNow] = React.useState(() => new Date());
+  React.useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const datePart = format(now, "EEEE, MMMM d, yyyy");
+  const timePart = format(now, "h:mm a");
+
+  if (!meal) {
+    return (
+      <div className="rounded-2xl border border-black/[0.08] bg-white px-4 py-3 text-center shadow-sm sm:px-5">
+        <p className="text-sm font-semibold text-neutral-900">{datePart}</p>
+        <p className="text-sm font-medium text-neutral-700">{timePart}</p>
+        <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+          Select the meal you are rating in the form below. Your submission will be recorded with the
+          date and time shown above.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-2xl border border-[#4285F4]/25 bg-[#4285F4]/8 px-4 py-3 text-center shadow-sm sm:px-5">
+      <p className="text-sm leading-relaxed text-neutral-800">
+        You are giving feedback for <span className="font-semibold text-neutral-950">{meal}</span> on{" "}
+        <span className="font-medium text-neutral-900">{datePart}</span> at{" "}
+        <span className="font-medium text-neutral-900">{timePart}</span>.
+      </p>
+      <p className="mt-2 text-xs leading-relaxed text-neutral-600 sm:text-sm">
+        Complete the steps in the form below to finish your submission for this meal.
+      </p>
+    </div>
+  );
+}
+
 export function FeedbackWizard() {
   const router = useRouter();
   const [step, setStep] = React.useState(0);
@@ -48,7 +86,7 @@ export function FeedbackWizard() {
 
   async function submit() {
     if (!meal || !block || !rating) {
-      toast.error("Please complete every step—it's quick, we promise.");
+      toast.error("Please complete all steps before submitting.");
       return;
     }
     setSubmitting(true);
@@ -70,32 +108,34 @@ export function FeedbackWizard() {
       }
       router.push("/feedback/thank-you");
     } catch {
-      toast.error("Network hiccup—try again in a moment.");
+      toast.error("Network error. Please try again in a moment.");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <Card className="mx-auto w-full max-w-xl border-black/[0.06] bg-white/90 shadow-xl shadow-black/[0.05] backdrop-blur-xl">
-      <CardHeader>
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#4285F4]">
-          <Sparkles className="size-4" />
-          Anonymous · 3 quick steps
-        </div>
-        <CardTitle className="text-2xl">Tell us about today&apos;s plate</CardTitle>
-        <CardDescription>No names, no IDs—just honest stars.</CardDescription>
-        <div className="flex gap-1 pt-2">
-          {[0, 1, 2].map((idx) => (
-            <span
-              key={idx}
-              className={`h-1 flex-1 rounded-full ${step >= idx ? "bg-[#4285F4]" : "bg-neutral-200"}`}
-            />
-          ))}
-        </div>
-      </CardHeader>
-      <CardContent className="min-h-[280px] sm:min-h-[300px]">
-        <AnimatePresence mode="wait">
+    <div className="mx-auto w-full max-w-xl space-y-4">
+      <FeedbackSessionNotice meal={meal} />
+      <Card className="w-full border-black/[0.06] bg-white/90 shadow-xl shadow-black/[0.05] backdrop-blur-xl">
+        <CardHeader>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#4285F4]">
+            <Sparkles className="size-4" />
+            Anonymous · three steps
+          </div>
+          <CardTitle className="text-2xl">Mess feedback form</CardTitle>
+          <CardDescription>No sign-in required. Ratings are anonymous.</CardDescription>
+          <div className="flex gap-1 pt-2">
+            {[0, 1, 2].map((idx) => (
+              <span
+                key={idx}
+                className={`h-1 flex-1 rounded-full ${step >= idx ? "bg-[#4285F4]" : "bg-neutral-200"}`}
+              />
+            ))}
+          </div>
+        </CardHeader>
+        <CardContent className="min-h-[280px] sm:min-h-[300px]">
+          <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div
               key="meal"
@@ -117,7 +157,7 @@ export function FeedbackWizard() {
                     }`}
                   >
                     <p className="text-base font-semibold">{m}</p>
-                    <p className="text-xs text-neutral-600">Tap to choose</p>
+                    <p className="text-xs text-neutral-600">Select</p>
                   </button>
                 ))}
               </div>
@@ -206,46 +246,47 @@ export function FeedbackWizard() {
                 </p>
               </div>
               <p className="text-sm text-muted-foreground">
-                Hover for a grin preview, tap to commit your stars—springy and calm.
+                Hover or focus stars for a preview, then click to set your rating.
               </p>
             </motion.div>
           )}
-        </AnimatePresence>
-      </CardContent>
-      <CardFooter className="flex justify-between gap-3">
-        <Button
+          </AnimatePresence>
+        </CardContent>
+        <CardFooter className="flex justify-between gap-3">
+          <Button
           variant="outline"
           className="rounded-full"
           onClick={() => setStep((s) => Math.max(0, s - 1))}
-          disabled={step === 0 || submitting}
-        >
-          Back
-        </Button>
-        {step < 2 ? (
-          <Button
-            className="relative isolate overflow-hidden rounded-full bg-[#4285F4] px-6"
-            disabled={submitting || (step === 0 && !meal) || (step === 1 && !block)}
-            onClick={() => setStep((s) => Math.min(2, s + 1))}
+            disabled={step === 0 || submitting}
           >
-            Continue
+            Back
           </Button>
-        ) : (
-          <Button
-            className="relative isolate overflow-hidden rounded-full bg-[#34A853] px-6"
-            disabled={submitting || rating === 0}
-            onClick={submit}
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Sending warmth…
-              </>
-            ) : (
-              <>Submit anonymously</>
-            )}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+          {step < 2 ? (
+            <Button
+              className="relative isolate overflow-hidden rounded-full bg-[#4285F4] px-6"
+              disabled={submitting || (step === 0 && !meal) || (step === 1 && !block)}
+              onClick={() => setStep((s) => Math.min(2, s + 1))}
+            >
+              Continue
+            </Button>
+          ) : (
+            <Button
+              className="relative isolate overflow-hidden rounded-full bg-[#34A853] px-6"
+              disabled={submitting || rating === 0}
+              onClick={submit}
+            >
+              {submitting ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Submitting…
+                </>
+              ) : (
+                <>Submit feedback</>
+              )}
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

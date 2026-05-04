@@ -103,7 +103,7 @@ function IntroPanel() {
               Mess Food Feedback Portal
             </h1>
             <p className="font-display text-xs font-normal tracking-wide text-neutral-500 sm:text-sm">
-              Anonymous mess ratings · live, gentle insights
+              Anonymous mess feedback with live analytics for Amrita campuses.
             </p>
           </div>
 

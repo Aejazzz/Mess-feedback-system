@@ -38,8 +38,8 @@ export function MealPie({ data }: { data: AnalyticsPayload | undefined }) {
   return (
     <Card className="bg-white/80 backdrop-blur-sm ring-black/[0.06]">
       <CardHeader>
-        <CardTitle>Meal mood mix</CardTitle>
-        <CardDescription>Average rating share by meal</CardDescription>
+        <CardTitle>Ratings by meal</CardTitle>
+        <CardDescription>Average rating per meal; tooltip shows response counts</CardDescription>
       </CardHeader>
       <CardContent className="h-[320px] w-full min-h-0 min-w-0">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -127,8 +127,8 @@ export function DailyTrend({ data }: { data: AnalyticsPayload | undefined }) {
   return (
     <Card className="bg-white/80 backdrop-blur-sm ring-black/[0.06]">
       <CardHeader>
-        <CardTitle>Daily softness curve</CardTitle>
-        <CardDescription>Last few days of averages</CardDescription>
+        <CardTitle>Daily rating trend</CardTitle>
+        <CardDescription>Average rating and response count by date</CardDescription>
       </CardHeader>
       <CardContent className="h-[320px] w-full min-h-0 min-w-0">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -173,8 +173,8 @@ export function RatingPie({ data }: { data: AnalyticsPayload | undefined }) {
   return (
     <Card className="bg-white/80 backdrop-blur-sm ring-black/[0.06]">
       <CardHeader>
-        <CardTitle>Ratings bouquet</CardTitle>
-        <CardDescription>How stars stack up overall</CardDescription>
+        <CardTitle>Star rating distribution</CardTitle>
+        <CardDescription>Count of responses for each star level</CardDescription>
       </CardHeader>
       <CardContent className="h-[300px] w-full min-h-0 min-w-0">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
@@ -219,8 +219,8 @@ export function MealDayHeat({ data }: { data: AnalyticsPayload | undefined }) {
   return (
     <Card className="bg-white/80 backdrop-blur-sm ring-black/[0.06]">
       <CardHeader>
-        <CardTitle>Gentle heatmap</CardTitle>
-        <CardDescription>Average sentiment by weekday × meal</CardDescription>
+        <CardTitle>Weekday × meal heatmap</CardTitle>
+        <CardDescription>Average rating by weekday and meal type</CardDescription>
       </CardHeader>
       <CardContent className="min-w-0">
         <div className="overflow-x-auto pb-2">
@@ -257,7 +257,7 @@ export function MealDayHeat({ data }: { data: AnalyticsPayload | undefined }) {
                           )}
                         </div>
                         <div className="mt-1 text-center text-[10px] text-neutral-600">
-                          {cell.count ? `${cell.count} resp.` : ""}
+                          {cell.count ? `${cell.count} responses` : ""}
                         </div>
                       </td>
                     );

@@ -31,20 +31,20 @@ function KpiRibbon({ data }: { data: AnalyticsPayload | undefined }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       <div className="rounded-2xl border border-black/[0.06] bg-white/70 p-4 shadow-sm backdrop-blur">
-        <p className="text-xs font-medium uppercase tracking-wide text-neutral-600">Total pulse</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-600">Total responses</p>
         <div className="mt-2 text-4xl font-semibold tracking-tight text-neutral-900">
           {data ? data.totalFeedbacks : <Skeleton className="h-9 w-20" />}
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Anonymous responses recorded</p>
+        <p className="mt-2 text-xs text-muted-foreground">Anonymous submissions recorded</p>
       </div>
       <div className="rounded-2xl border border-black/[0.06] bg-white/70 p-4 shadow-sm backdrop-blur">
         <p className="text-xs font-medium uppercase tracking-wide text-neutral-600">
-          Gentle average
+          Overall average
         </p>
         <div className="mt-2 text-4xl font-semibold tracking-tight text-[#4285F4]">
           {data ? `${data.avgRatingOverall.toFixed(2)}★` : <Skeleton className="h-9 w-20" />}
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">Rounded to two serene decimals</p>
+        <p className="mt-2 text-xs text-muted-foreground">Average star rating (two decimal places)</p>
       </div>
       <div className="col-span-2 rounded-2xl border border-black/[0.06] bg-gradient-to-br from-[#4285F4]/10 via-[#34A853]/10 to-transparent p-4 shadow-inner shadow-[#4285F4]/10 sm:col-span-1">
         <p className="text-xs font-medium uppercase tracking-wide text-neutral-700">
@@ -56,7 +56,7 @@ function KpiRibbon({ data }: { data: AnalyticsPayload | undefined }) {
         <p className="mt-2 text-xs text-neutral-700">
           {data?.serverTimeISO
             ? `${format(new Date(data.serverTimeISO), "MMM d • h:mm a")} server time`
-            : "Refreshing live context"}
+            : "Loading server time"}
         </p>
       </div>
     </div>
@@ -76,8 +76,8 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
             {/* DOM: snapshot → submit → hero so mobile reads top-to-bottom; lg:order restores desktop columns */}
             <Card className="order-1 border-white/60 bg-white/70 shadow-lg shadow-black/[0.04] backdrop-blur-xl lg:order-2">
               <CardHeader>
-                <CardTitle>Live campus snapshot</CardTitle>
-                <CardDescription>Auto-refreshing every few seconds</CardDescription>
+                <CardTitle>Live overview</CardTitle>
+                <CardDescription>Figures update automatically every few seconds</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <KpiRibbon data={data} />
@@ -120,11 +120,11 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05, type: "spring", stiffness: 180, damping: 22 }}
                 >
-                  Meals that listen to every hallway.
+                  Mess food feedback, at a glance.
                 </motion.h1>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-600">
-                  Glide through a buttery-smooth dashboard for Amrita hostel dining—friendly inputs,
-                  live charts, and block-by-block clarity shaped by pastel Google tones.
+                  Submit anonymous mess feedback, view ratings and trends, and explore summaries by meal,
+                  hostel block, and date—all in one place for Amrita campuses.
                 </p>
                 <div className="mt-8 lg:hidden">
                   <Link href="/analytics" className="inline-flex">
@@ -163,7 +163,7 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
             <div>
               <h2 className="text-2xl font-semibold tracking-tight">Meal feedback summary</h2>
               <p className="text-sm text-muted-foreground">
-                Color cues follow soft green / amber / rose bands.
+                Green, amber, and red tones show higher, middle, and lower average ratings.
               </p>
             </div>
           </div>
@@ -172,9 +172,9 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
 
         <section id="analytics" className="space-y-4">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Analytics canvas</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">Charts and breakdowns</h2>
             <p className="text-sm text-muted-foreground">
-              Pie, bar, line, and heat views—always responsive, always calm.
+              Pie, bar, line, and heat views by meal, block, and date.
             </p>
           </div>
           <div className="grid min-w-0 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
@@ -192,12 +192,12 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
           <div>
             <h2 className="text-2xl font-semibold tracking-tight">Recent trends</h2>
             <p className="text-sm text-muted-foreground">
-              Plain-language pulses from comparing recent weeks.
+              Short summaries from recent feedback trends.
             </p>
           </div>
           <Card className="border-black/[0.06] bg-white/80 backdrop-blur">
             <CardContent className="space-y-3 p-6">
-              {(data?.insights?.length ? data.insights : ["Not enough data yet—be the first voice."]).map(
+              {(data?.insights?.length ? data.insights : ["Not enough responses yet to show trends."]).map(
                 (line, idx) => (
                   <div
                     key={`${idx}-${line}`}

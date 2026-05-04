@@ -63,7 +63,7 @@ export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined 
                     </span>
                     <div className="min-w-0">
                       <CardTitle className="text-base leading-tight sm:text-lg">{meal}</CardTitle>
-                      <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Rolling snapshot</p>
+                      <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Average for this meal</p>
                     </div>
                   </div>
                   <Badge
@@ -108,7 +108,7 @@ export function MealSummaryCards({ data }: { data: AnalyticsPayload | undefined 
                 </div>
               </CardContent>
               <CardFooter className="text-[0.62rem] leading-snug text-neutral-700 sm:text-xs">
-                Suggested campus session is informed by gentle time windows—not strict cutoffs.
+                Meal labels use approximate time windows (breakfast, lunch, snacks, dinner), not exact cut‑offs.
               </CardFooter>
             </Card>
           </motion.div>

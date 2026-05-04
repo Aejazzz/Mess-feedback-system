@@ -40,13 +40,13 @@ function KpiGrid({ data }: { data: AnalyticsPayload | undefined }) {
         </div>
       </div>
       <div className="rounded-3xl border border-black/[0.06] bg-white/80 p-4 shadow-sm backdrop-blur">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-600">Meal hint</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-600">Suggested meal</p>
         <div className="mt-3 text-2xl font-semibold text-neutral-900">
           {data ? data.suggestedMeal : <Skeleton className="h-7 w-32" />}
         </div>
       </div>
       <div className="rounded-3xl border border-black/[0.06] bg-white/80 p-4 shadow-sm backdrop-blur">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-600">Clock</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-600">Server time</p>
         <div className="mt-3 text-xl font-semibold leading-snug text-neutral-900">
           {ts ?? <Skeleton className="h-7 w-40" />}
         </div>
@@ -73,8 +73,8 @@ export function AnalyticsPageBody({ initial }: { initial: AnalyticsPayload | nul
             </motion.div>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Analytics dashboard</h1>
             <p className="max-w-2xl text-base text-neutral-600">
-              Production-friendly aggregations grouped by meal, day, date, and hostel block—with
-              distribution, trends, and a soft heat grid.
+              Aggregated anonymous feedback by meal, weekday, date, and hostel block—including
+              distributions, trends, and a weekday × meal heatmap.
             </p>
           </div>
           <Link href="/feedback">
@@ -86,8 +86,8 @@ export function AnalyticsPageBody({ initial }: { initial: AnalyticsPayload | nul
 
         <Card className="border-black/[0.06] bg-white/85 backdrop-blur">
           <CardHeader>
-            <CardTitle>Pulse overview</CardTitle>
-            <CardDescription>Everything animates smoothly; polling keeps you current.</CardDescription>
+            <CardTitle>Overview</CardTitle>
+            <CardDescription>Key figures refresh automatically while you view this page.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <KpiGrid data={data} />
@@ -117,11 +117,11 @@ export function AnalyticsPageBody({ initial }: { initial: AnalyticsPayload | nul
 
         <Card className="border-black/[0.06] bg-white/80 backdrop-blur">
           <CardHeader>
-            <CardTitle>Smart insights</CardTitle>
-            <CardDescription>Heuristic week-over-week comparisons</CardDescription>
+            <CardTitle>Insights</CardTitle>
+            <CardDescription>Automated notes from recent feedback patterns</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {(data?.insights?.length ? data.insights : ["Collect a little more data to unlock trends."]).map(
+            {(data?.insights?.length ? data.insights : ["Add more feedback to unlock trend summaries."]).map(
               (line, idx) => (
                 <div key={`${idx}-${line}`} className="rounded-2xl bg-[#FAFAFA] px-4 py-3 text-sm text-neutral-800 ring-1 ring-black/[0.04]">
                   {line}

@@ -29,7 +29,7 @@ function computeInsights(byMealRecent: Record<MealType, CountAvg>): string[] {
   const tips: string[] = [];
   const meals = MEALS.filter((m) => byMealRecent[m].count >= 5);
   if (meals.length === 0) {
-    tips.push("Share feedback after each meal—the more voices, the clearer the trends.");
+    tips.push("Submit feedback after meals—more responses make trends more reliable.");
     return tips;
   }
   const weakest = [...meals].sort((a, b) => byMealRecent[a].avg - byMealRecent[b].avg)[0];
@@ -40,7 +40,9 @@ function computeInsights(byMealRecent: Record<MealType, CountAvg>): string[] {
   if (byMealRecent[strongest].avg >= 4.2) {
     tips.push(`${strongest} satisfaction is trending strong (${byMealRecent[strongest].avg.toFixed(1)}★).`);
   }
-  tips.push(`Thank you—${insightsTotalLabel(byMealRecent)} students shaped this snapshot.`);
+  tips.push(
+    `Based on ${insightsTotalLabel(byMealRecent)} recent responses across meals in this window.`
+  );
   return tips.slice(0, 4);
 }
 

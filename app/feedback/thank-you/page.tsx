@@ -37,23 +37,23 @@ export default function ThankYouPage() {
             <CheckCircle2 className="size-10" />
           </motion.div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">That was delightful</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">Thank you</h1>
             <p className="text-lg text-neutral-600">
-              Thank you for helping improve the mess experience 💛
+              Your feedback was submitted successfully. It helps improve the mess experience.
             </p>
           </div>
           <motion.p className="text-sm text-muted-foreground" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}>
-            Gliding you to the analytics lounge…
+            Redirecting you to analytics…
           </motion.p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/analytics"
               className="rounded-full bg-[#4285F4] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-[#4285F4]/30"
             >
-              Go now
+              View analytics
             </Link>
             <Link href="/" className="rounded-full px-5 py-2 text-sm font-semibold text-neutral-700 ring-1 ring-black/[0.08] hover:bg-neutral-50">
-              Home instead
+              Back to home
             </Link>
           </div>
         </motion.div>

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: "%s — Amrita Food Feedback",
   },
   description:
-    "Anonymous hostel mess feedback with live, gentle analytics for Amrita campuses.",
+    "Anonymous hostel mess feedback with live analytics for Amrita campuses.",
 };
 
 export default function RootLayout({
