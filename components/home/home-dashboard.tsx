@@ -73,7 +73,37 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
       <main className="mx-auto min-w-0 max-w-6xl space-y-12 px-4 pb-16 pt-8 sm:pt-12">
         <section className="overflow-hidden rounded-3xl border border-black/[0.06] bg-gradient-to-br from-white via-white to-[#4285F4]/6 p-4 shadow-sm sm:rounded-[28px] sm:p-6 lg:rounded-[32px] lg:p-8">
           <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div className="min-w-0 space-y-4 lg:space-y-0">
+            {/* DOM: snapshot → submit → hero so mobile reads top-to-bottom; lg:order restores desktop columns */}
+            <Card className="order-1 border-white/60 bg-white/70 shadow-lg shadow-black/[0.04] backdrop-blur-xl lg:order-2">
+              <CardHeader>
+                <CardTitle>Live campus snapshot</CardTitle>
+                <CardDescription>Auto-refreshing every few seconds</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <KpiRibbon data={data} />
+                {loading && !data && (
+                  <div className="grid gap-2">
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-5/6" />
+                    <Skeleton className="h-3 w-2/3" />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            <div className="order-2 lg:hidden">
+              <Link href="/feedback" className="flex w-full sm:inline-flex sm:w-auto">
+                <Button className="group relative isolate w-full overflow-hidden rounded-full bg-[#4285F4] px-6 py-6 text-base font-semibold text-white shadow-lg shadow-[#4285F4]/30 sm:w-auto">
+                  <span className="relative z-[1] flex items-center justify-center gap-2">
+                    Submit Feedback
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                  <span className="pointer-events-none absolute inset-0 rounded-full opacity-60 mix-blend-screen">
+                    <span className="absolute left-1/2 top-full size-[200%] -translate-x-1/2 rounded-full bg-white/35 transition-transform duration-[1100ms] ease-out group-hover:-translate-y-[135%]" />
+                  </span>
+                </Button>
+              </Link>
+            </div>
+            <div className="order-3 min-w-0 space-y-4 lg:order-1 lg:space-y-0">
               <div className="rounded-3xl border border-black/[0.06] bg-white/95 p-5 shadow-sm sm:p-6 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -105,19 +135,6 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
                   </Link>
                 </div>
               </div>
-              <div className="lg:hidden">
-                <Link href="/feedback" className="flex w-full sm:inline-flex sm:w-auto">
-                  <Button className="group relative isolate w-full overflow-hidden rounded-full bg-[#4285F4] px-6 py-6 text-base font-semibold text-white shadow-lg shadow-[#4285F4]/30 sm:w-auto">
-                    <span className="relative z-[1] flex items-center justify-center gap-2">
-                      Submit Feedback
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                    <span className="pointer-events-none absolute inset-0 rounded-full opacity-60 mix-blend-screen">
-                      <span className="absolute left-1/2 top-full size-[200%] -translate-x-1/2 rounded-full bg-white/35 transition-transform duration-[1100ms] ease-out group-hover:-translate-y-[135%]" />
-                    </span>
-                  </Button>
-                </Link>
-              </div>
               <div className="mt-8 hidden flex-wrap gap-3 lg:flex">
                 <Link href="/feedback">
                   <Button className="group relative isolate overflow-hidden rounded-full bg-[#4285F4] px-6 py-6 text-base font-semibold text-white shadow-lg shadow-[#4285F4]/30">
@@ -138,22 +155,6 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
                 </Link>
               </div>
             </div>
-            <Card className="border-white/60 bg-white/70 shadow-lg shadow-black/[0.04] backdrop-blur-xl">
-              <CardHeader>
-                <CardTitle>Live campus snapshot</CardTitle>
-                <CardDescription>Auto-refreshing every few seconds</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <KpiRibbon data={data} />
-                {loading && !data && (
-                  <div className="grid gap-2">
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-5/6" />
-                    <Skeleton className="h-3 w-2/3" />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </section>
 
