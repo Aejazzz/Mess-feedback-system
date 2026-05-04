@@ -23,24 +23,24 @@ export function AppNavbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full min-w-0 border-b border-black/[0.06] bg-white/70 backdrop-blur-xl">
-      <div className="relative mx-auto flex h-14 w-full min-w-0 max-w-6xl items-center gap-2 px-3 sm:h-16 sm:gap-3 sm:px-4 lg:gap-4 lg:px-6">
+      <div className="mx-auto grid h-14 w-full min-w-0 max-w-6xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 px-3 sm:h-16 sm:gap-x-3 sm:px-4 md:flex md:items-center md:justify-between md:gap-4 lg:px-6">
         <Link
           href="/"
           aria-label="Mess Food Feedback — home"
-          className="relative z-10 flex min-w-0 shrink-0 items-center gap-2 rounded-lg py-1 text-neutral-900 md:gap-3"
+          className="flex min-w-0 shrink-0 items-center gap-1.5 rounded-lg py-1 text-neutral-900 sm:gap-2 md:gap-3"
         >
-          <span className="relative h-8 w-[10rem] max-w-[calc(100vw-9rem)] shrink-0 sm:h-9 sm:w-[11.5rem] sm:max-w-none md:h-10 md:w-[13.5rem]">
+          <span className="relative h-8 w-[min(9.25rem,36vw)] shrink-0 sm:h-9 sm:w-[11.5rem] md:h-10 md:w-[13.5rem] md:max-w-none">
             <Image
               src="/amrita-vishwa-vidyapeetham-logo.svg"
               alt="Amrita Vishwa Vidyapeetham"
               fill
               className="object-contain object-left"
               priority
-              sizes="(max-width: 640px) 10rem, 13.5rem"
+              sizes="(max-width: 768px) 9.25rem, 13.5rem"
             />
           </span>
           <span
-            className="select-none text-lg font-extralight leading-none text-neutral-300 sm:text-xl"
+            className="shrink-0 select-none text-base font-extralight leading-none text-neutral-400 sm:text-lg md:text-xl"
             aria-hidden
           >
             ×
@@ -50,14 +50,14 @@ export function AppNavbar() {
           </span>
         </Link>
 
-        <span
-          className="pointer-events-none absolute left-1/2 top-1/2 z-0 max-w-[min(200px,calc(100vw-8.5rem))] -translate-x-1/2 -translate-y-1/2 truncate text-center font-display text-xs font-semibold tracking-wide text-neutral-900 sm:text-sm md:hidden"
+        <p
+          className="min-w-0 truncate px-1 text-center font-display text-[0.6875rem] font-semibold leading-tight tracking-wide text-neutral-900 min-[380px]:text-xs sm:text-sm md:hidden"
           aria-hidden
         >
           Mess Food Feedback
-        </span>
+        </p>
 
-        <div className="relative z-10 ml-auto flex shrink-0 items-center gap-1 md:gap-2">
+        <div className="flex shrink-0 items-center justify-end gap-1 md:gap-2">
           <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
             {links.map(({ href, label }) => {
               const active = pathname === href;
