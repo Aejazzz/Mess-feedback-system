@@ -11,7 +11,6 @@ import {
   DailyTrend,
   MealDayHeat,
   MealPie,
-  NationalIntlBars,
   RatingPie,
   StudentBlockBars,
 } from "@/components/charts/analytics-charts";
@@ -74,8 +73,8 @@ export function AnalyticsPageBody({ initial }: { initial: AnalyticsPayload | nul
             </motion.div>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Analytics dashboard</h1>
             <p className="max-w-2xl text-base text-neutral-600">
-              Production-friendly aggregations grouped by meal, day, date, hostel block, and national vs
-              international cohorts—with distribution, trends, and a soft heat grid.
+              Production-friendly aggregations grouped by meal, day, date, and hostel block—with
+              distribution, trends, and a soft heat grid.
             </p>
           </div>
           <Link href="/feedback">
@@ -108,7 +107,6 @@ export function AnalyticsPageBody({ initial }: { initial: AnalyticsPayload | nul
           <MealPie data={data} />
           <RatingPie data={data} />
           <StudentBlockBars data={data} />
-          <NationalIntlBars data={data} />
           <div className="min-w-0 lg:col-span-2">
             <DailyTrend data={data} />
           </div>

@@ -49,7 +49,7 @@ function insightsTotalLabel(byMealRecent: Record<MealType, CountAvg>): number {
 }
 
 async function grouped(
-  field: "mealType" | "block" | "studentType" | "date" | "day"
+  field: "mealType" | "block" | "date" | "day"
 ): Promise<{ key: string; _avg: { rating: number | null }; _count: { _all: number } }[]> {
   const rows = await prisma.feedback.groupBy({
     by: [field],
@@ -93,7 +93,6 @@ export async function getAnalyticsPayload(): Promise<AnalyticsPayload> {
     dayRows,
     dateRowsRaw,
     blockRows,
-    typeRows,
     heatmapRows,
     distRows,
     recentWeekByMealRows,
@@ -110,7 +109,6 @@ export async function getAnalyticsPayload(): Promise<AnalyticsPayload> {
       orderBy: { date: "asc" },
     }),
     grouped("block"),
-    grouped("studentType"),
     groupedMealDay(),
     prisma.feedback.groupBy({ by: ["rating"], _count: { _all: true } }),
     prisma.feedback.groupBy({
@@ -134,7 +132,6 @@ export async function getAnalyticsPayload(): Promise<AnalyticsPayload> {
 
   const byDay = avgFromBuckets(dayRows);
   const byBlock = avgFromBuckets(blockRows);
-  const byStudentType = avgFromBuckets(typeRows);
 
   const byDate = dateRowsRaw
     .filter((r) => r.date >= formatYmd(cutoff))
@@ -197,7 +194,6 @@ export async function getAnalyticsPayload(): Promise<AnalyticsPayload> {
     byDay,
     byDate,
     byBlock,
-    byStudentType,
     ratingDistribution,
     heatmapMealDay: heatmapRows,
     insights,

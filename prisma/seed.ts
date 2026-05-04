@@ -31,7 +31,6 @@ async function main() {
     return {
       mealType: pick(MEALS),
       block: pick(HOSTEL_BLOCKS),
-      studentType: Math.random() < 0.82 ? "National" : "International",
       rating: Math.min(5, Math.max(1, Math.round(2.3 + Math.random() * 2.4 + (Math.random() < 0.08 ? -1 : 0)))),
       date: dateLabel,
       day: dayLabel,

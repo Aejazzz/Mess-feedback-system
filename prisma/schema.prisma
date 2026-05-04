@@ -10,17 +10,16 @@ datasource db {
 }
 
 model Feedback {
-  id          String   @id @default(cuid())
-  mealType    String
-  block       String
-  studentType String
-  rating      Int
-  date        String
-  day         String
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  mealType  String
+  block     String
+  rating    Int
+  review    String?
+  date      String
+  day       String
+  createdAt DateTime @default(now())
 
   @@index([date])
   @@index([mealType])
   @@index([block])
-  @@index([studentType])
 }

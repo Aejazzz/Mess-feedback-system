@@ -164,39 +164,6 @@ export function DailyTrend({ data }: { data: AnalyticsPayload | undefined }) {
   );
 }
 
-export function NationalIntlBars({ data }: { data: AnalyticsPayload | undefined }) {
-  const rows = Object.entries(data?.byStudentType ?? {}).map(([name, v]) => ({
-    name,
-    avg: v.avg,
-    count: v.count,
-  }));
-  return (
-    <Card className="bg-white/80 backdrop-blur-sm ring-black/[0.06]">
-      <CardHeader>
-        <CardTitle>National • International</CardTitle>
-        <CardDescription>Warm averages, side by side</CardDescription>
-      </CardHeader>
-      <CardContent className="h-[320px] w-full min-h-0 min-w-0">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-          <BarChart data={rows} margin={{ left: 8, right: 8, top: 8, bottom: 0 }}>
-            <defs>
-              <linearGradient id="intlGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FBBC05" stopOpacity={0.95} />
-                <stop offset="100%" stopColor="#FBBC05" stopOpacity={0.2} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#00000010" />
-            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-            <YAxis domain={[0, 5]} tick={{ fontSize: 12 }} />
-            <Tooltip />
-            <Bar dataKey="avg" fill="url(#intlGrad)" radius={[10, 10, 6, 6]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
-  );
-}
-
 export function RatingPie({ data }: { data: AnalyticsPayload | undefined }) {
   const dist = data?.ratingDistribution ?? { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 };
   const chart = (["5", "4", "3", "2", "1"] as const).map((k) => ({

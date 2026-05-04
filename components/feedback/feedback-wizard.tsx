@@ -22,9 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { HOSTEL_BLOCKS, MEALS, STUDENT_TYPES } from "@/lib/constants";
+import { FEEDBACK_REVIEW_MAX_LEN, HOSTEL_BLOCKS, MEALS } from "@/lib/constants";
 import type { MealType } from "@/lib/constants";
-import type { StudentType } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
 const emojiFor: Record<number, string> = {
   1: "😭",
@@ -39,15 +39,15 @@ export function FeedbackWizard() {
   const [step, setStep] = React.useState(0);
   const [meal, setMeal] = React.useState<MealType | "">("");
   const [block, setBlock] = React.useState<string>("");
-  const [studentType, setStudentType] = React.useState<StudentType | "">("");
   const [rating, setRating] = React.useState(0);
   const [hover, setHover] = React.useState(0);
+  const [review, setReview] = React.useState("");
   const [submitting, setSubmitting] = React.useState(false);
 
   const active = hover || rating;
 
   async function submit() {
-    if (!meal || !block || !studentType || !rating) {
+    if (!meal || !block || !rating) {
       toast.error("Please complete every step—it's quick, we promise.");
       return;
     }
@@ -56,7 +56,12 @@ export function FeedbackWizard() {
       const res = await fetch("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mealType: meal, block, studentType, rating }),
+        body: JSON.stringify({
+          mealType: meal,
+          block,
+          rating,
+          review: review.trim() || undefined,
+        }),
       });
       const body = await res.json();
       if (!res.ok) {
@@ -76,12 +81,12 @@ export function FeedbackWizard() {
       <CardHeader>
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#4285F4]">
           <Sparkles className="size-4" />
-          Anonymous · 4 gentle steps
+          Anonymous · 3 quick steps
         </div>
         <CardTitle className="text-2xl">Tell us about today&apos;s plate</CardTitle>
         <CardDescription>No names, no IDs—just honest stars.</CardDescription>
         <div className="flex gap-1 pt-2">
-          {[0, 1, 2, 3].map((idx) => (
+          {[0, 1, 2].map((idx) => (
             <span
               key={idx}
               className={`h-1 flex-1 rounded-full ${step >= idx ? "bg-[#4285F4]" : "bg-neutral-200"}`}
@@ -89,7 +94,7 @@ export function FeedbackWizard() {
           ))}
         </div>
       </CardHeader>
-      <CardContent className="min-h-[240px]">
+      <CardContent className="min-h-[280px] sm:min-h-[300px]">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div
@@ -146,36 +151,6 @@ export function FeedbackWizard() {
 
           {step === 2 && (
             <motion.div
-              key="type"
-              initial={{ opacity: 0, filter: "blur(6px)", x: -10 }}
-              animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
-              exit={{ opacity: 0, filter: "blur(6px)", x: 12 }}
-              transition={{ type: "spring", stiffness: 280, damping: 28 }}
-              className="space-y-4"
-            >
-              <p className="text-lg font-semibold tracking-tight">Student type</p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {STUDENT_TYPES.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setStudentType(t)}
-                    className={`rounded-2xl border px-4 py-4 text-left shadow-sm ring-1 transition-all hover:-translate-y-1 hover:shadow-md ${
-                      studentType === t
-                        ? "border-[#34A853] bg-[#34A853]/10"
-                        : "border-black/[0.06] bg-[#FAFAFA]"
-                    }`}
-                  >
-                    <p className="text-base font-semibold">{t}</p>
-                    <p className="text-xs text-neutral-600">Helps us spot diverse tastes</p>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div
               key="rating"
               initial={{ opacity: 0, filter: "blur(6px)", x: -10 }}
               animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
@@ -203,14 +178,32 @@ export function FeedbackWizard() {
                       onBlur={() => setHover(0)}
                       onClick={() => setRating(star)}
                       whileTap={{ scale: 0.9 }}
-                      className={`grid size-12 place-items-center rounded-2xl text-2xl transition-colors ${
+                      className={cn(
+                        "grid size-12 place-items-center rounded-2xl text-2xl transition-colors",
                         filled ? "bg-amber-100 text-amber-700" : "bg-neutral-50 text-neutral-400"
-                      }`}
+                      )}
                     >
                       ★
                     </motion.button>
                   );
                 })}
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="feedback-review" className="text-sm font-semibold text-neutral-900">
+                  Write a review
+                </label>
+                <textarea
+                  id="feedback-review"
+                  value={review}
+                  onChange={(e) => setReview(e.target.value.slice(0, FEEDBACK_REVIEW_MAX_LEN))}
+                  rows={4}
+                  maxLength={FEEDBACK_REVIEW_MAX_LEN}
+                  placeholder="Optional — what stood out, or what could be better?"
+                  className="w-full resize-y rounded-2xl border border-input bg-transparent px-4 py-3 text-base text-neutral-900 shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-[#4285F4] focus-visible:ring-[3px] focus-visible:ring-[#4285F4]/25 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {review.length} / {FEEDBACK_REVIEW_MAX_LEN}
+                </p>
               </div>
               <p className="text-sm text-muted-foreground">
                 Hover for a grin preview, tap to commit your stars—springy and calm.
@@ -228,16 +221,11 @@ export function FeedbackWizard() {
         >
           Back
         </Button>
-        {step < 3 ? (
+        {step < 2 ? (
           <Button
             className="relative isolate overflow-hidden rounded-full bg-[#4285F4] px-6"
-            disabled={
-              submitting ||
-              (step === 0 && !meal) ||
-              (step === 1 && !block) ||
-              (step === 2 && !studentType)
-            }
-            onClick={() => setStep((s) => Math.min(3, s + 1))}
+            disabled={submitting || (step === 0 && !meal) || (step === 1 && !block)}
+            onClick={() => setStep((s) => Math.min(2, s + 1))}
           >
             Continue
           </Button>

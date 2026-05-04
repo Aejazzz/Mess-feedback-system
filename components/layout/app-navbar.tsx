@@ -28,14 +28,14 @@ export function AppNavbar() {
           href="/"
           className="flex min-w-0 max-w-[min(100%,22rem)] items-center gap-2 rounded-lg py-1 pr-1 text-neutral-900"
         >
-          <span className="relative h-9 w-36 shrink-0 overflow-hidden rounded-lg ring-1 ring-black/[0.06] sm:h-10 sm:w-44">
+          <span className="relative h-9 w-[11.5rem] shrink-0 sm:h-10 sm:w-[13.5rem]">
             <Image
-              src="/amrita-logo.png"
+              src="/amrita-vishwa-vidyapeetham-logo.svg"
               alt="Amrita Vishwa Vidyapeetham"
               fill
               className="object-contain object-left"
               priority
-              sizes="(max-width: 640px) 9rem, 11rem"
+              sizes="(max-width: 640px) 11.5rem, 13.5rem"
             />
           </span>
           <span className="hidden min-w-0 flex-col leading-tight sm:flex">

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import * as React from "react";
@@ -11,23 +10,6 @@ import { AppNavbar } from "@/components/layout/app-navbar";
 
 export default function ThankYouPage() {
   const router = useRouter();
-
-  React.useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!prefersReducedMotion) {
-      const burst = window.setTimeout(() => {
-        confetti({
-          particleCount: 160,
-          spread: 74,
-          startVelocity: 35,
-          origin: { x: 0.5, y: 0.45 },
-          colors: ["#4285F4", "#34A853", "#FBBC05"],
-        });
-      }, 520);
-      return () => window.clearTimeout(burst);
-    }
-    return undefined;
-  }, []);
 
   React.useEffect(() => {
     const redirect = window.setTimeout(() => {

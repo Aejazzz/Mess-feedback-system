@@ -1,26 +1,28 @@
 import { Prisma } from "@prisma/client";
 
 import { getMealSessionContext } from "@/lib/meal-context";
-import { HOSTEL_BLOCKS, MEALS, STUDENT_TYPES } from "@/lib/constants";
+import { FEEDBACK_REVIEW_MAX_LEN, HOSTEL_BLOCKS, MEALS } from "@/lib/constants";
 import type { MealType } from "@/lib/constants";
-import type { StudentType } from "@/lib/constants";
 
 import { prisma } from "@/lib/prisma";
 
 export type FeedbackInput = {
   mealType: MealType;
   block: string;
-  studentType: StudentType;
   rating: number;
+  review?: string | null;
 };
 
 export function validateFeedback(input: FeedbackInput): string | null {
   if (!MEALS.includes(input.mealType)) return "Invalid meal type.";
   if (!(HOSTEL_BLOCKS as readonly string[]).includes(input.block))
     return "Invalid hostel block.";
-  if (!STUDENT_TYPES.includes(input.studentType)) return "Invalid student type.";
   if (!Number.isInteger(input.rating) || input.rating < 1 || input.rating > 5) {
     return "Rating must be between 1 and 5.";
+  }
+  const review = input.review?.trim() ?? "";
+  if (review.length > FEEDBACK_REVIEW_MAX_LEN) {
+    return `Review must be at most ${FEEDBACK_REVIEW_MAX_LEN} characters.`;
   }
   return null;
 }
@@ -30,13 +32,14 @@ export async function createAnonymousFeedback(body: FeedbackInput) {
   if (err) return { ok: false as const, error: err };
 
   const ctx = getMealSessionContext();
+  const reviewTrimmed = body.review?.trim() ?? "";
   try {
     await prisma.feedback.create({
       data: {
         mealType: body.mealType,
         block: body.block,
-        studentType: body.studentType,
         rating: body.rating,
+        review: reviewTrimmed.length > 0 ? reviewTrimmed : null,
         date: ctx.dateLabel,
         day: ctx.dayLabel,
       },

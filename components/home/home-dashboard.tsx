@@ -11,7 +11,6 @@ import {
   DailyTrend,
   MealDayHeat,
   MealPie,
-  NationalIntlBars,
   RatingPie,
   StudentBlockBars,
 } from "@/components/charts/analytics-charts";
@@ -158,7 +157,6 @@ export function HomeDashboard({ initial }: { initial: AnalyticsPayload | null })
             <MealPie data={data} />
             <StudentBlockBars data={data} />
             <DailyTrend data={data} />
-            <NationalIntlBars data={data} />
             <div className="min-w-0 lg:col-span-2">
               <MealDayHeat data={data} />
             </div>

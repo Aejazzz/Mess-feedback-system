@@ -2,17 +2,16 @@ export const MEALS = ["Breakfast", "Lunch", "Snacks", "Dinner"] as const;
 export type MealType = (typeof MEALS)[number];
 
 export const HOSTEL_BLOCKS = [
-  "A Block",
-  "B Block",
-  "C Block",
-  "D Block",
-  "E Block",
-  "F Block",
+  "Mathura",
+  "Govardhan",
+  "Gokul",
+  "Brindavan",
+  "Devaki",
 ] as const;
 export type BlockType = (typeof HOSTEL_BLOCKS)[number];
 
-export const STUDENT_TYPES = ["National", "International"] as const;
-export type StudentType = (typeof STUDENT_TYPES)[number];
+/** Max characters for optional written feedback */
+export const FEEDBACK_REVIEW_MAX_LEN = 2000;
 
 /** Google-inspired palette */
 export const palette = {

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import type { MealType } from "@/lib/constants";
-import type { StudentType } from "@/lib/constants";
 import { createAnonymousFeedback } from "@/services/feedback-service";
 
 export const runtime = "nodejs";
@@ -16,7 +15,7 @@ export async function POST(req: Request) {
 
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
     return NextResponse.json(
-      { error: "Expected a JSON object with mealType, block, studentType, and rating." },
+      { error: "Expected a JSON object with mealType, block, rating, and optional review." },
       { status: 400 }
     );
   }
@@ -31,25 +30,34 @@ export async function POST(req: Request) {
         ? Number.parseInt(ratingUnknown, 10)
         : Number.NaN;
 
+  const reviewRaw = payload.review;
+  const review =
+    reviewRaw === null || reviewRaw === undefined
+      ? null
+      : typeof reviewRaw === "string"
+        ? reviewRaw
+        : String(reviewRaw);
+
   const body = {
     mealType: String(payload.mealType ?? ""),
     block: String(payload.block ?? ""),
-    studentType: String(payload.studentType ?? ""),
     rating,
+    review,
   };
 
   const res = await createAnonymousFeedback({
     mealType: body.mealType as MealType,
     block: body.block,
-    studentType: body.studentType as StudentType,
     rating: Number.isFinite(rating) ? rating : Number.NaN,
+    review: body.review,
   });
 
   if (!res.ok) {
     const isValidation =
       res.error.includes("Invalid") ||
       res.error.includes("between") ||
-      res.error.includes("Rating");
+      res.error.includes("Rating") ||
+      res.error.includes("Review must");
     return NextResponse.json(
       { error: res.error },
       { status: isValidation ? 400 : 503 }

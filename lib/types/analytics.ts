@@ -13,7 +13,6 @@ export type AnalyticsPayload = {
   byDay: Record<string, CountAvg>;
   byDate: { date: string; count: number; avg: number }[];
   byBlock: Record<string, CountAvg>;
-  byStudentType: Record<string, CountAvg>;
   ratingDistribution: RatingDistribution;
   heatmapMealDay: { day: string; mealType: MealType; avg: number; count: number }[];
   insights: string[];
